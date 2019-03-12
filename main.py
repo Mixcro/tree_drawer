@@ -6,6 +6,8 @@ from PIL import Image, ImageDraw, ImageFont
 max_length = 20  # 每行最大字符数
 font_size = 24  # 字体大小
 line_color = (0,192,192)  # 导引线颜色
+sign_list = ['，', '。', '；', '：', '‘', '’', '“', '”', '！', '？', ',', '.', ';', ':']
+
 
 def color(level):
     '''根据层级划分颜色'''
@@ -27,8 +29,13 @@ def read_file(path):
             text_list.append([level, line[:max_length]])
             line = 'sub' + line[max_length:]
             while line != 'sub':
+                # 把标点符号弄回上行行末
+                while line[3:4] in sign_list:
+                    text_list[-1][1] += line[3:4]
+                    line = line[:3] + line[4:]
                 # 自动换行
                 text_list.append([level, line[:max_length+3]])
+                # 添加换行标识
                 line = 'sub' + line[max_length+3:]
     return(text_list)
 
@@ -85,6 +92,6 @@ if __name__ == '__main__':
     for item in os.listdir(input_path):
         text_list = read_file(os.path.join(input_path, item))
         image = draw_image(text_list)
-        image.show()
+        #image.show()
         save_image(image, os.path.join(output_path, '%s.png'%item[:-4]))
     print('Bye world.')
