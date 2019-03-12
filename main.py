@@ -23,6 +23,10 @@ def read_file(path):
         for line in f.readlines():
             level = 0
             line = re.sub(r'\n' ,'', line)
+            # 清洗空行层级
+            if "".join(line.split()) == '':
+                line = ''
+            # 判断层级
             while line[:4] == '    ':
                 level += 1
                 line = line[4:]
@@ -33,6 +37,8 @@ def read_file(path):
                 while line[3:4] in sign_list:
                     text_list[-1][1] += line[3:4]
                     line = line[:3] + line[4:]
+                if line == 'sub':
+                    break
                 # 自动换行
                 text_list.append([level, line[:max_length+3]])
                 # 添加换行标识
@@ -80,11 +86,11 @@ def draw_image(text_list):
                             for _y in range(y, y+height+1):
                                 draw.point((_x, _y), fill=line_color)
     return(image)
-    
+
 def save_image(image, path):
     '''保存结果'''
     image.save(path, 'png')
-    
+
 if __name__ == '__main__':
     print('Hello world.')
     input_path = './input'
